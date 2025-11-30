@@ -1,0 +1,7 @@
+django>=5.0
+python-dotenv
+psycopg2-binary
+django-ninja
+python-jose[cryptography]
+pydantic
+pydantic-settings

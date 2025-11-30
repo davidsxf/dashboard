@@ -14,7 +14,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/api/**': {
-      cors: true
+      proxy: 'http://127.0.0.1:8000/api/**'
     }
   },
 
@@ -25,6 +25,20 @@ export default defineNuxtConfig({
       stylistic: {
         commaDangle: 'never',
         braceStyle: '1tbs'
+      }
+    }
+  },
+
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8000/api'
+    }
+  },
+
+  ui: {
+    icons: {
+      providers: {
+        googleicons: false
       }
     }
   }

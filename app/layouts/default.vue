@@ -1,116 +1,91 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { useRouter } from 'vue-router'
+import { useAuth } from '~/composables/useAuth'
 
 const route = useRoute()
 const toast = useToast()
+const router = useRouter()
+const { isAuthenticated, logout } = useAuth()
 
 const open = ref(false)
 
+// 导航菜单
 const links = [[{
-  label: 'Home',
+  label: '首页',
   icon: 'i-lucide-house',
   to: '/',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Inbox',
-  icon: 'i-lucide-inbox',
-  to: '/inbox',
-  badge: '4',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
-  label: 'Customers',
+  label: '员工管理',
   icon: 'i-lucide-users',
-  to: '/customers',
+  to: '/employees',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Settings',
+  label: '部门管理',
+  icon: 'i-lucide-building',
+  to: '/departments',
+  onSelect: () => {
+    open.value = false
+  }
+}, {
+  label: '科研团队',
+  icon: 'i-lucide-users-round',
+  to: '/teams',
+  onSelect: () => {
+    open.value = false
+  }
+}, {
+  label: '系统设置',
   to: '/settings',
   icon: 'i-lucide-settings',
   defaultOpen: true,
   type: 'trigger',
   children: [{
-    label: 'General',
+    label: '用户管理',
+    to: '/settings/users',
+    onSelect: () => {
+      open.value = false
+    }
+  }, {
+    label: '角色权限',
+    to: '/settings/roles',
+    onSelect: () => {
+      open.value = false
+    }
+  }, {
+    label: '系统配置',
     to: '/settings',
     exact: true,
     onSelect: () => {
       open.value = false
     }
-  }, {
-    label: 'Members',
-    to: '/settings/members',
-    onSelect: () => {
-      open.value = false
-    }
-  }, {
-    label: 'Notifications',
-    to: '/settings/notifications',
-    onSelect: () => {
-      open.value = false
-    }
-  }, {
-    label: 'Security',
-    to: '/settings/security',
-    onSelect: () => {
-      open.value = false
-    }
   }]
 }], [{
-  label: 'Feedback',
-  icon: 'i-lucide-message-circle',
-  to: 'https://github.com/nuxt-ui-templates/dashboard',
-  target: '_blank'
-}, {
-  label: 'Help & Support',
-  icon: 'i-lucide-info',
-  to: 'https://github.com/nuxt-ui-templates/dashboard',
-  target: '_blank'
+  label: '退出登录',
+  icon: 'i-lucide-log-out',
+  onClick: async () => {
+    await logout()
+    router.push('/login')
+  }
 }]] satisfies NavigationMenuItem[][]
 
 const groups = computed(() => [{
   id: 'links',
-  label: 'Go to',
+  label: '导航',
   items: links.flat()
-}, {
-  id: 'code',
-  label: 'Code',
-  items: [{
-    id: 'source',
-    label: 'View page source',
-    icon: 'i-simple-icons-github',
-    to: `https://github.com/nuxt-ui-templates/dashboard/blob/main/app/pages${route.path === '/' ? '/index' : route.path}.vue`,
-    target: '_blank'
-  }]
 }])
 
+// 检查登录状态
 onMounted(async () => {
-  const cookie = useCookie('cookie-consent')
-  if (cookie.value === 'accepted') {
-    return
+  // 除了登录页面，其他页面需要登录
+  if (!isAuthenticated.value && route.path !== '/login') {
+    router.push('/login')
   }
-
-  toast.add({
-    title: 'We use first-party cookies to enhance your experience on our website.',
-    duration: 0,
-    close: false,
-    actions: [{
-      label: 'Accept',
-      color: 'neutral',
-      variant: 'outline',
-      onClick: () => {
-        cookie.value = 'accepted'
-      }
-    }, {
-      label: 'Opt out',
-      color: 'neutral',
-      variant: 'ghost'
-    }]
-  })
 })
 </script>
 
